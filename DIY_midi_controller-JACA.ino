@@ -1,13 +1,13 @@
 /*
-    MetaReciclarte 2023
+    MetaReciclarte 2023 - Coletivo JACA
     Controlador MIDI
-    Colaboradores: Coletivo JACA, Muziek Mutantti, Vagné L.
+    Colaboradores: Coletivo JACA, Muziek Mutantti, 
+    Desenvolvedor: Vagné L.
     Email:dev@muziekmutantti.com.br
     GitHub: https://github.com/muziekmutantti
     GitBook:
     Data:17.12.22
 */
-
 
 /*
  Escolhendo seu placa
@@ -17,7 +17,7 @@
  você não precisa comentar ou descomentar qualquer biblioteca MIDI abaixo depois de definir sua placa
 */
 
-#define ATMEGA328 1 //* coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define DEBUG 1 // * coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
 /////////////////////////////////////////////
 // BIBLIOTECAS
@@ -40,10 +40,9 @@ MIDI_CREATE_DEFAULT_INSTANCE();  // Caso haja alguma falha ao compilar, comentar
 //LED
 int LED = 12;
  
-/////////////////////////////////////////////
-// BOTOES
-const int N_BUTTONS = 8; //*  número total de botões
-const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2,3,4,5,6,7,8,9}; //* pinos de cada botão conectado diretamente ao Arduino
+// BOTÕES
+const int N_BUTTONS = 4; //*  número total de botões
+const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2,3,4,5}; //* pinos de cada botão conectado diretamente ao Arduino
 
 //#define pin13 1 // descomente se você estiver usando o pino 13 (o pino com led), ou comente a linha se não
 byte pin13index = 12; //* coloque o índice do pin 13 do array buttonPin[] se você estiver usando, se não, comente
@@ -55,8 +54,7 @@ int buttonPState[N_BUTTONS] = {};        // armazena o valor anterior do botão
 unsigned long lastDebounceTime[N_BUTTONS] = {0};  // a última vez que o pino de saída foi alternado
 unsigned long debounceDelay = 5;    //* o tempo de debounce; aumentar se a saída estiver mandando muitas notas de uma vez so
 
-/////////////////////////////////////////////
-// POTENCIOMETROS
+// POTENCIÔMETROS
 const int N_POTS = 2; //* número total de pots (slide e rotativo)
 const int POT_ARDUINO_PIN[N_POTS] = {A0,A1}; //* pinos de cada pot conectado diretamente ao Arduino
 
@@ -90,7 +88,7 @@ void setup() {
   pinMode(LED, OUTPUT);
 
 #ifdef DEBUG
-Serial.println("Debug mode");
+Serial.println("Modo Debug");
 Serial.println();
 #endif
 
@@ -109,8 +107,8 @@ pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT);
 /////////////////////////////////////////////
 // LOOP
 void loop() {
-  buttons();
-  potentiometers();
+  botoes();
+  potenciometros();
   leds();
 }
 
@@ -121,8 +119,8 @@ void leds(){
 
 }
 
-// BOTOES
-void buttons() {
+// BOTÕES
+void botoes() {
   for (int i = 0; i < N_BUTTONS; i++) {
     buttonCState[i] = digitalRead(BUTTON_ARDUINO_PIN[i]);   // lê os pinos do arduino
 
@@ -157,7 +155,7 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
 
           #elif DEBUG
           Serial.print(i);
-          Serial.println(": button on");
+          Serial.println(": Botão Ligado");
           digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
 
           #endif
@@ -182,7 +180,7 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
 
             #elif DEBUG
             Serial.print(i);
-            Serial.println(": button off");
+            Serial.println(": Botão Desligado");
             digitalWrite(LED, LOW);  // turn the LED on (HIGH is the voltage level)
 
             #endif
@@ -194,8 +192,8 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
 }
 
 /////////////////////////////////////////////
-// POTENTIOMETERS
-void potentiometers() {
+// POTENCIÔMETROS
+void potenciometros() {
 
   for (int i = 0; i < N_POTS; i++) { // Faz o loop de todos os potenciômetros
 
@@ -235,7 +233,7 @@ void potentiometers() {
         usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
 
         #elif DEBUG
-        Serial.print("Pot: ");
+        Serial.print("Potenciometro: ");
         Serial.print(i);
         Serial.print(" ");
         Serial.println(midiCState[i]);
