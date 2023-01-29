@@ -10,11 +10,9 @@
 */
 
 /*
- Escolhendo seu placa
- Defina seu placa, escolha:
+ Defina o modelo da placa:
  "ATMEGA328" se estiver usando o ATmega328 - Uno, Mega, Nano ...
- "DEBUG" se você quer apenas debugar o código no monitor serial
- você não precisa comentar ou descomentar qualquer biblioteca MIDI abaixo depois de definir sua placa
+ "DEBUG" se você quer apenas debugar o código no monitor serial.
 */
 
 #define DEBUG 1 // * coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
@@ -71,20 +69,20 @@ boolean potMoving = true; // se o potenciometro esta se movendo
 unsigned long PTime[N_POTS] = {0}; // tempo armazenado anteriormente
 unsigned long timer[N_POTS] = {0}; // armazena o tempo que passou desde que o timer foi zerado
 
-/////////////////////////////////////////////
-// midi
+
+// Configuração MIDI
 byte midiCh = 1; //* Canal MIDI a ser usado
 byte note = 36; //* nota mais baixa a ser usada
 byte cc = 1; //* O mais baixo MIDI CC a ser usado
 
-/////////////////////////////////////////////
+
 // SETUP
 void setup() {
 
-  // Baud Rate
-  // use se estiver usando with ATmega328 (uno, mega, nano...)
-  // 31250 para MIDI class compliant | 115200 para Hairless MIDI
-  Serial.begin(115200); //*
+  /* Baud Rate
+     use se estiver usando with ATmega328 (uno, mega, nano...)
+     31250 para MIDI class compliant | 115200 para Hairless MIDI */
+  Serial.begin(115200); 
   pinMode(LED, OUTPUT);
 
 #ifdef DEBUG
@@ -141,18 +139,6 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
           // ATmega328 (uno, mega, nano...)
           MIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
           digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
-
-          #elif ATMEGA32U4
-          // ATmega32U4 (micro, pro micro, leonardo...)
-          noteOn(midiCh, note + i, 127);  // channel, note, velocity
-          MidiUSB.flush();
-          digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
-
-          #elif TEENSY
-          // Teensy
-          usbMIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
-          digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
-
           #elif DEBUG
           Serial.print(i);
           Serial.println(": Botão Ligado");
@@ -166,18 +152,6 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
             // ATmega328 (uno, mega, nano...)
             MIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
             digitalWrite(LED, LOW);  // turn the LED on (LOW is the voltage level)
-
-            #elif ATMEGA32U4
-            // ATmega32U4 (micro, pro micro, leonardo...)
-            noteOn(midiCh, note + i, 0);  // channel, note, velocity
-            MidiUSB.flush();
-            digitalWrite(LED, LOW);  // turn the LED on (LOW is the voltage level)
-
-            #elif TEENSY
-            // Teensy
-            usbMIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
-            digitalWrite(LED, LOW);  // turn the LED on (LOW is the voltage level)
-
             #elif DEBUG
             Serial.print(i);
             Serial.println(": Botão Desligado");
@@ -222,16 +196,6 @@ void potenciometros() {
         #ifdef ATMEGA328
         // ATmega328 (uno, mega, nano...)
         MIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
-
-        #elif ATMEGA32U4
-        // ATmega32U4 (micro, pro micro, leonardo...)
-        controlChange(midiCh, cc + i, midiCState[i]); //  (channel, CC number,  CC value)
-        MidiUSB.flush();
-
-        #elif TEENSY
-        // Teensy
-        usbMIDI.sendControlChange(cc + i, midiCState[i], midiCh); // cc number, cc value, midi channel
-
         #elif DEBUG
         Serial.print("Potenciometro: ");
         Serial.print(i);
@@ -247,22 +211,4 @@ void potenciometros() {
   }
 }
 
-/////////////////////////////////////////////
-// se estiver usando com ATmega32U4 (micro, pro micro, leonardo ...)
-#ifdef ATMEGA32U4
-  // Arduino (pro)micro midi functions MIDIUSB Library
-  void noteOn(byte channel, byte pitch, byte velocity) {
-    midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
-    MidiUSB.sendMIDI(noteOn);
-  }
 
-  void noteOff(byte channel, byte pitch, byte velocity) {
-    midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
-    MidiUSB.sendMIDI(noteOff);
-  }
-
-  void controlChange(byte channel, byte control, byte value) {
-    midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
-    MidiUSB.sendMIDI(event);
-  }
-#endif
