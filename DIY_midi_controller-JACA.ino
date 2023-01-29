@@ -1,6 +1,6 @@
 /*
     MetaReciclarte 2023
-    Controlador MIDI
+    Controlador MIDI
     Colaboradores: Coletivo JACA, Muziek Mutantti, Vagné L.
     Email:dev@muziekmutantti.com.br
     GitHub: https://github.com/muziekmutantti
@@ -38,12 +38,12 @@ MIDI_CREATE_DEFAULT_INSTANCE();  // Caso haja alguma falha ao compilar, comentar
 // --Criação de Variaveis e Constantes-- //
 
 //LED
-int LED = 9;
+int LED = 12;
  
 /////////////////////////////////////////////
 // BOTOES
-const int N_BUTTONS = 1; //*  número total de botões
-const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {4}; //* pinos de cada botão conectado diretamente ao Arduino
+const int N_BUTTONS = 8; //*  número total de botões
+const int BUTTON_ARDUINO_PIN[N_BUTTONS] = {2,3,4,5,6,7,8,9}; //* pinos de cada botão conectado diretamente ao Arduino
 
 //#define pin13 1 // descomente se você estiver usando o pino 13 (o pino com led), ou comente a linha se não
 byte pin13index = 12; //* coloque o índice do pin 13 do array buttonPin[] se você estiver usando, se não, comente
@@ -57,8 +57,8 @@ unsigned long debounceDelay = 5;    //* o tempo de debounce; aumentar se a saíd
 
 /////////////////////////////////////////////
 // POTENCIOMETROS
-const int N_POTS = 1; //* número total de pots (slide e rotativo)
-const int POT_ARDUINO_PIN[N_POTS] = {A0}; //* pinos de cada pot conectado diretamente ao Arduino
+const int N_POTS = 2; //* número total de pots (slide e rotativo)
+const int POT_ARDUINO_PIN[N_POTS] = {A0,A1}; //* pinos de cada pot conectado diretamente ao Arduino
 
 int potCState[N_POTS] = {0}; // estado atual da porta analogica
 int potPState[N_POTS] = {0}; // estado previo da porta analogica
