@@ -10,14 +10,15 @@
 */
 
 /*
- Defina o modelo da placa:
+ Escolhendo seu placa
+ Defina seu placa, escolha:
  "ATMEGA328" se estiver usando o ATmega328 - Uno, Mega, Nano ...
- "DEBUG" se você quer apenas debugar o código no monitor serial.
+ "DEBUG" se você quer apenas debugar o código no monitor serial
+ você não precisa comentar ou descomentar qualquer biblioteca MIDI abaixo depois de definir sua placa
 */
 
-#define DEBUG 1 // * coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
+#define ATMEGA328 1 // * coloque aqui o uC que você está usando, como nas linhas acima seguidas de "1", como "ATMEGA328 1", "DEBUG 1", etc.
 
-/////////////////////////////////////////////
 // BIBLIOTECAS
 // -- Define a biblioteca MIDI -- //
 
@@ -25,15 +26,9 @@
 #ifdef ATMEGA328
 #include <MIDI.h> // Use a "by Francois Best, lathoub"
 MIDI_CREATE_DEFAULT_INSTANCE();  // Caso haja alguma falha ao compilar, comentar essa linha
-
-// se estiver usando com ATmega32U4 - Micro, Pro Micro, Leonardo ...
-#elif ATMEGA32U4
-#include "MIDIUSB.h"
-
 #endif
 
-
-// --Criação de Variaveis e Constantes-- //
+// Variaveis e Constantes //
 
 //LED
 int LED = 12;
@@ -69,20 +64,17 @@ boolean potMoving = true; // se o potenciometro esta se movendo
 unsigned long PTime[N_POTS] = {0}; // tempo armazenado anteriormente
 unsigned long timer[N_POTS] = {0}; // armazena o tempo que passou desde que o timer foi zerado
 
-
-// Configuração MIDI
+// midi
 byte midiCh = 1; //* Canal MIDI a ser usado
 byte note = 36; //* nota mais baixa a ser usada
 byte cc = 1; //* O mais baixo MIDI CC a ser usado
 
-
 // SETUP
 void setup() {
 
-  /* Baud Rate
-     use se estiver usando with ATmega328 (uno, mega, nano...)
-     31250 para MIDI class compliant | 115200 para Hairless MIDI */
-  Serial.begin(115200); 
+  // Baud Rate use se estiver usando with ATmega328 (uno, mega, nano...)
+  // 31250 para MIDI class compliant | 115200 para Hairless MIDI
+  Serial.begin(115200); //*
   pinMode(LED, OUTPUT);
 
 #ifdef DEBUG
@@ -102,19 +94,17 @@ pinMode(BUTTON_ARDUINO_PIN[pin13index], INPUT);
 
 }
 
-/////////////////////////////////////////////
 // LOOP
 void loop() {
   botoes();
   potenciometros();
-  leds();
 }
 
-/////////////////////////////////////////////
-
 //LEDS
-void leds(){
-
+void leds(int btnCS){
+  if (btnCS == LOW) {
+    digitalWrite(LED, HIGH);
+  }else{digitalWrite(LED, LOW);}
 }
 
 // BOTÕES
@@ -138,11 +128,13 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
           #ifdef ATMEGA328
           // ATmega328 (uno, mega, nano...)
           MIDI.sendNoteOn(note + i, 127, midiCh); // note, velocity, channel
-          digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
+          // digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
+          leds(buttonCState[i]);
           #elif DEBUG
           Serial.print(i);
           Serial.println(": Botão Ligado");
-          digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
+          // digitalWrite(LED, HIGH);  // turn the LED on (HIGH is the voltage level)
+          leds(buttonCState[i]);
 
           #endif
 
@@ -151,11 +143,13 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
             #ifdef ATMEGA328
             // ATmega328 (uno, mega, nano...)
             MIDI.sendNoteOn(note + i, 0, midiCh); // note, velocity, channel
-            digitalWrite(LED, LOW);  // turn the LED on (LOW is the voltage level)
+            // digitalWrite(LED, LOW);  // turn the LED on (LOW is the voltage level)
+            leds(buttonCState[i]);
             #elif DEBUG
             Serial.print(i);
             Serial.println(": Botão Desligado");
-            digitalWrite(LED, LOW);  // turn the LED on (HIGH is the voltage level)
+            // digitalWrite(LED, LOW);  // turn the LED on (HIGH is the voltage level)
+            leds(buttonCState[i]);
 
             #endif
         }
@@ -172,9 +166,7 @@ void potenciometros() {
   for (int i = 0; i < N_POTS; i++) { // Faz o loop de todos os potenciômetros
 
     potCState[i] = analogRead(POT_ARDUINO_PIN[i]);
-
     midiCState[i] = map(potCState[i], 0, 1023, 0, 127); // Mapeia a leitura do potCState para um valor utilizável em midi
-
     potVar = abs(potCState[i] - potPState[i]); // Calcula o valor absoluto entre a diferença entre o estado atual e o anterior do pot
 
     if (potVar > varThreshold) { // Abre o portão se a variação do potenciômetro for maior que o limite (varThreshold)
@@ -210,5 +202,3 @@ void potenciometros() {
     }
   }
 }
-
-
