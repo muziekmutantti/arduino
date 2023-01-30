@@ -5,7 +5,7 @@
     Desenvolvedor: Vagné L.
     Email:dev@muziekmutantti.com.br
     GitHub: https://github.com/muziekmutantti
-    GitBook:
+    GitBook: https://muziek-mutantti.gitbook.io/arduino-controlador-midi/
     Data:17.12.22
 */
 
