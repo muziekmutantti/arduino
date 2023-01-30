@@ -159,7 +159,7 @@ buttonCState[i] = !buttonCState[i]; // inverte o pino 13 porque tem um resistor 
   }
 }
 
-/////////////////////////////////////////////
+
 // POTENCIÔMETROS
 void potenciometros() {
 
