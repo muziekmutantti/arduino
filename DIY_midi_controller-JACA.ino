@@ -85,10 +85,50 @@ void setup() {
 
 // LOOP
 void loop() {
-  botoes();
   potenciometros();
+  botoes();
 }
 // LOOP
+
+// POTENCIÔMETROS
+void potenciometros() {
+  for (int i = 0; i < N_POTS; i++) {  // Faz o loop de todos os potenciômetros
+    potVAtual[i] = analogRead(POT_ARDUINO_PIN[i]);
+    midiVAtual[i] = map(potVAtual[i], 0, 1023, 0, 127);  // Mapeia a leitura do potVAtual para um valor utilizável em midi
+    potVar = abs(potVAtual[i] - potVAnterior[i]);        // Calcula o valor absoluto entre a diferença entre o estado atual e o anterior do pot
+
+    if (potVar > varThreshold) {   // Abre o portão se a variação do potenciômetro for maior que o limite (varThreshold)
+      anteriorTime[i] = millis();  // Armazena o tempo anterior
+    }
+
+    timer[i] = millis() - anteriorTime[i];  // Reseta o timer 11000 - 11000 = 0ms
+
+    if (timer[i] < TIMEOUT) {  // Se o timer for menor que o tempo máximo permitido, significa que o potenciômetro ainda está se movendo
+      potMov = true;
+    } else {
+      potMov = false;
+    }
+
+    if (potMov == true) {  // Se o potenciômetro ainda estiver em movimento, envie control change
+      if (midiVAnterior[i] != midiVAtual[i]) {
+// Envia o MIDI CC de acordo com a placa escolhida
+#ifdef ATMEGA328
+        // ATmega328 (uno, mega, nano...)
+        MIDI.sendControlChange(cc + i, midiVAtual[i], midiCh);  // cc number, cc value, midi channel
+#elif DEBUG
+        Serial.print("Potenciometro: ");
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.println(midiVAtual[i]);
+//Serial.print("  ");
+#endif
+
+        potVAnterior[i] = potVAtual[i];  // Armazena a leitura atual do potenciômetro para comparar com a próxima
+        midiVAnterior[i] = midiVAtual[i];
+      }
+    }
+  }
+}  // POTENCIÔMETROS
 
 // BOTÕES
 void botoes() {
@@ -132,7 +172,7 @@ void botoes() {
       }
     }
   }
-}// FIM BOTÕES
+}  // FIM BOTÕES
 
 //LEDS
 void leds(int btnCS) {
@@ -141,45 +181,4 @@ void leds(int btnCS) {
   } else {
     digitalWrite(LED, LOW);
   }
-}//LEDS
-
-// POTENCIÔMETROS
-void potenciometros() {
-
-  for (int i = 0; i < N_POTS; i++) {  // Faz o loop de todos os potenciômetros
-    potVAtual[i] = analogRead(POT_ARDUINO_PIN[i]);
-    midiVAtual[i] = map(potVAtual[i], 0, 1023, 0, 127);  // Mapeia a leitura do potVAtual para um valor utilizável em midi
-    potVar = abs(potVAtual[i] - potVAnterior[i]);        // Calcula o valor absoluto entre a diferença entre o estado atual e o anterior do pot
-
-    if (potVar > varThreshold) {   // Abre o portão se a variação do potenciômetro for maior que o limite (varThreshold)
-      anteriorTime[i] = millis();  // Armazena o tempo anterior
-    }
-
-    timer[i] = millis() - anteriorTime[i];  // Reseta o timer 11000 - 11000 = 0ms
-
-    if (timer[i] < TIMEOUT) {  // Se o timer for menor que o tempo máximo permitido, significa que o potenciômetro ainda está se movendo
-      potMov = true;
-    } else {
-      potMov = false;
-    }
-
-    if (potMov == true) {  // Se o potenciômetro ainda estiver em movimento, envie control change
-      if (midiVAnterior[i] != midiVAtual[i]) {
-// Envia o MIDI CC de acordo com a placa escolhida
-#ifdef ATMEGA328
-        // ATmega328 (uno, mega, nano...)
-        MIDI.sendControlChange(cc + i, midiVAtual[i], midiCh);  // cc number, cc value, midi channel
-#elif DEBUG
-        Serial.print("Potenciometro: ");
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.println(midiVAtual[i]);
-//Serial.print("  ");
-#endif
-
-        potVAnterior[i] = potVAtual[i];  // Armazena a leitura atual do potenciômetro para comparar com a próxima
-        midiVAnterior[i] = midiVAtual[i];
-      }
-    }
-  }
-}// POTENCIÔMETROS
+}  //LEDS
