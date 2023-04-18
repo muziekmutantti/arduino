@@ -1,17 +1,18 @@
 /*
-    MetaReciclarte 2023 - Coletivo JACA
+    Licenciado com CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+    MetaReciclarte 2023 - Coletivo JACA - https://www.juventudeativista.com.br
     Controlador MIDI com Arduino
-    Colaboradores: Coletivo JACA, Muziek Mutantti, 
     Desenvolvedor: Vagné L.
+    Colaboradores: Coletivo JACA(Cairo Costa, Marivaldo Gomes, Luar Vieira, Rilton Jr., Vagné L.), Muziek Mutantti. 
     Email:dev@muziekmutantti.com.br
     GitHub: https://github.com/muziekmutantti
     GitBook:https://muziek-mutantti.gitbook.io/arduino-controlador-midi/
-    Data:17.12.22
+    Data de Lançamento:17.12.22
+    Data de Atualização:18.04.23
 */
 
 /* "ATMEGA328" para placas ATmega328 - Uno, Mega, Nano  | "DEBUG" para debugar o código via monitor serial */
 #define ATMEGA328 1  // *uC que você está usando como "ATMEGA328 1", "DEBUG 1".
-
 // Adicionando BIBLIOTECAS
 #ifdef ATMEGA328
 #include <MIDI.h>  // Procure por "Francois Best, lathoub"
@@ -54,15 +55,14 @@ boolean potMov = true;                       // se o potenciometro esta se moven
 unsigned long anteriorTime[N_POTS] = { 0 };  // tempo armazenado anteriormente
 unsigned long timer[N_POTS] = { 0 };         // armazena o tempo que passou desde que o timer foi zerado
 
-// midi
+// Configuração MIDI
 byte midiCh = 1;  //* Canal MIDI a ser usado
 byte note = 36;   //* nota mais baixa a ser usada
 byte cc = 1;      //* O mais baixo MIDI CC a ser usado
 
 // SETUP
 void setup() {
-
-  // Baud Rate use se estiver usando with ATmega328 (uno, mega, nano...)
+  // Baud Rate use se estiver usando ATmega328 (uno, mega, nano...)
   // 31250 para MIDI class compliant | 115200 para Hairless MIDI
   Serial.begin(115200);  //*
   pinMode(LED, OUTPUT);
@@ -72,7 +72,7 @@ void setup() {
   Serial.println();
 #endif
 
-  // Buttons
+  // Botões
   // Inicializa botões com pull up resistor
   for (int i = 0; i < N_BOT; i++) {
     pinMode(BOT_ARDUINO_PIN[i], INPUT_PULLUP);
@@ -120,7 +120,6 @@ void potenciometros() {
         Serial.print(i);
         Serial.print(" ");
         Serial.println(midiVAtual[i]);
-//Serial.print("  ");
 #endif
 
         potVAnterior[i] = potVAtual[i];  // Armazena a leitura atual do potenciômetro para comparar com a próxima
@@ -182,3 +181,10 @@ void leds(int btnCS) {
     digitalWrite(LED, LOW);
   }
 }  //LEDS
+
+
+/*
+Refs: https://arduino.cc
+
+MetaReciclarte - 2023
+*/
