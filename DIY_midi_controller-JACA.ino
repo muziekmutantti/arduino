@@ -27,8 +27,8 @@ const int LED = 12;
 const int N_BOT = 4;                                //  número total de botões
 const int BOT_ARDUINO_PIN[N_BOT] = { 2, 3, 4, 5 };  //* pinos de cada botão conectado diretamente ao Arduino
 
-//#define pin13 1 // descomente se você estiver usando o pino 13 (o pino com led), ou comente a linha se não
-//byte pin13index = 12;  //* coloque o índice do pin 13 do array buttonPin[] se você estiver usando, se não, comente
+//#define pin13 1 // Caso esteja usando o pino 13 com LED descomente essa linha
+//byte pin13index = 12;  //* Informe o índice do pin 13 do array BOT_ARDUINO_PIN[] se você estiver usando, se não, comente
 
 int botVAtual[N_BOT] = {};     // armazena o valor atual do botão
 int botVAnterior[N_BOT] = {};  // armazena o valor anterior do botão
