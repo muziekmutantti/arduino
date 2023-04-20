@@ -26,7 +26,7 @@ const int LED = 12;
 
 // BOTÕES
 const int N_BOT = 4;                                //  número total de botões
-const int BOT_ARDUINO_PIN[N_BOT] = { 2, 3, 4, 5 };  //* pinos de cada botão conectado diretamente ao Arduino
+const int BOT_ARDUINO_PIN[N_BOT] = { 2, 3, 4, 5 };  //* pinos de cada botão conectado ao Arduino
 
 //#define pin13 1 // Caso esteja usando o pino 13 com LED descomente essa linha
 //byte pin13index = 12;  //* Informe o índice do pin 13 do array BOT_ARDUINO_PIN[] se você estiver usando, se não, comente
@@ -36,11 +36,11 @@ int botVAnterior[N_BOT] = {};  // armazena o valor anterior do botão
 
 // debounce
 unsigned long lastDebounceTime[N_BOT] = {};  // a última vez que o pino de saída foi alternado
-unsigned long debounceDelay = 5;             //* o tempo de debounce; aumentar se a saída estiver mandando muitas notas de uma vez so
+unsigned long debounceDelay = 5;             // o tempo de debounce; aumentar se a saída estiver mandando muitas notas de uma vez so
 
 // POTENCIÔMETROS
-const int N_POTS = 2;                            //* número total de pots (slide e rotativo)
-const int POT_ARDUINO_PIN[N_POTS] = { A0, A1 };  //* pinos de cada pot conectado diretamente ao Arduino
+const int N_POTS = 2;                            // número total de pots (slide e rotativo)
+const int POT_ARDUINO_PIN[N_POTS] = { A0, A1 };  // pinos de cada pot conectado diretamente ao Arduino
 
 int potVAtual[N_POTS] = { 0 };     // estado atual da porta analogica
 int potVAnterior[N_POTS] = { 0 };  // estado previo da porta analogica
@@ -49,8 +49,8 @@ int potVar = 0;                    // variacao entre o valor do estado previo e 
 int midiVAtual[N_POTS] = { 0 };     // Estado atual do valor midi
 int midiVAnterior[N_POTS] = { 0 };  // Estado anterior do valor midi
 
-const int TIMEOUT = 300;                     //* quantidade de tempo em que o potenciometro sera lido apos ultrapassar o varThreshold
-const int varThreshold = 10;                 //* threshold para a variacao no sinal do potenciometro
+const int TIMEOUT = 300;                     // quantidade de tempo em que o potenciometro sera lido apos ultrapassar o varThreshold
+const int varThreshold = 10;                 // threshold para a variacao no sinal do potenciometro
 boolean potMov = true;                       // se o potenciometro esta se movendo
 unsigned long anteriorTime[N_POTS] = { 0 };  // tempo armazenado anteriormente
 unsigned long timer[N_POTS] = { 0 };         // armazena o tempo que passou desde que o timer foi zerado
@@ -63,7 +63,7 @@ byte cc = 1;      //* O mais baixo MIDI CC a ser usado
 // SETUP
 void setup() {
   // Baud Rate use se estiver usando ATmega328 (uno, mega, nano...)
-  // 31250 para MIDI class compliant | 115200 para Hairless MIDI
+  // 31250 para MIDI Class Compliant | 115200 para Hairless MIDI
   Serial.begin(115200);  //*
   pinMode(LED, OUTPUT);
 
@@ -111,7 +111,7 @@ void potenciometros() {
 
     if (potMov == true) {  // Se o potenciômetro ainda estiver em movimento, envie control change
       if (midiVAnterior[i] != midiVAtual[i]) {
-// Envia o MIDI CC de acordo com a placa escolhida
+// Envia o MIDI CC
 #ifdef ATMEGA328
         // ATmega328 (uno, mega, nano...)
         MIDI.sendControlChange(cc + i, midiVAtual[i], midiCh);  // cc number, cc value, midi channel
@@ -121,7 +121,6 @@ void potenciometros() {
         Serial.print(" ");
         Serial.println(midiVAtual[i]);
 #endif
-
         potVAnterior[i] = potVAtual[i];  // Armazena a leitura atual do potenciômetro para comparar com a próxima
         midiVAnterior[i] = midiVAtual[i];
       }
@@ -146,26 +145,24 @@ void botoes() {
 
         if (botVAtual[i] == LOW) {
 
-// Envia a nota MIDI ON de acordo com a placa escolhida
+// Envia a nota MIDI ON
 #ifdef ATMEGA328                                   // ATmega328 (uno, mega, nano...)
           MIDI.sendNoteOn(note + i, 127, midiCh);  // note, velocity, channel
-          leds(botVAtual[i]);
 #elif DEBUG
           Serial.print(i);
           Serial.println(": Botão Ligado");
-          leds(botVAtual[i]);
 #endif
+          leds(botVAtual[i]);
 
         } else {
-// Envia a nota MIDI OFF de acordo com a placa escolhida
+// Envia a nota MIDI OFF
 #ifdef ATMEGA328                                 // ATmega328 (uno, mega, nano...)
           MIDI.sendNoteOn(note + i, 0, midiCh);  // note, velocity, channel
-          leds(botVAtual[i]);
 #elif DEBUG
           Serial.print(i);
           Serial.println(": Botão Desligado");
-          leds(botVAtual[i]);
 #endif
+          leds(botVAtual[i]);
         }
         botVAnterior[i] = botVAtual[i];
       }
@@ -185,6 +182,5 @@ void leds(int btnCS) {
 
 /*
 Refs: https://arduino.cc
-
 MetaReciclarte - 2023
 */
